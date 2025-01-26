@@ -8,7 +8,14 @@ export async function getFigmaFileData(fileId) {
     });
 
     if (!response.ok) {
-        throw new Error(`Figma API error: ${response.statusText}`);
+        let errorMessage = `Figma API error: ${response.statusText}`;
+        try {
+            const errorBody = await response.json();
+            errorMessage += ` - ${JSON.stringify(errorBody)}`;
+        } catch (e) {
+            // If parsing JSON fails, continue with the original error message
+        }
+        throw new Error(errorMessage);
     }
 
     return response.json();
